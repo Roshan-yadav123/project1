@@ -1,0 +1,124 @@
+#include <stdio.h>
+
+// Function prototypes
+void initializeBoard(char board[3][3]);
+void printBoard(char board[3][3]);
+int checkWin(char board[3][3], char player);
+int checkDraw(char board[3][3]);
+int makeMove(char board[3][3], int row, int col, char player);
+
+int main() {
+    char board[3][3];
+    char currentPlayer = 'X';
+    int row, col;
+    int moveResult;
+
+    initializeBoard(board);
+
+    do {
+        // Print the current state of the board
+        printBoard(board);
+
+        // Get the current player's move
+        printf("Player %c, enter your move (row and column): ", currentPlayer);
+        scanf("%d %d", &row, &col);
+
+        // Make the move and check the result
+        moveResult = makeMove(board, row, col, currentPlayer);
+
+        if (moveResult == 1) {
+            // The move was valid, check for a win or draw
+            if (checkWin(board, currentPlayer)) {
+                printf("Player %c wins!\n", currentPlayer);
+                break;
+            } else if (checkDraw(board)) {
+                printf("The game is a draw!\n");
+                break;
+            }
+
+            // Switch to the other player
+            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+        } else {
+            // The move was invalid, ask for input again
+            printf("Invalid move. Try again.\n");
+        }
+
+    } while (1);  // Infinite loop, breaks when the game is over
+
+    return 0;
+}
+
+// Function to initialize the Tic-Tac-Toe board
+void initializeBoard(char board[3][3]) {
+    int i, j;
+    for (i = 0; i < 3; ++i) {
+        for (j = 0; j < 3; ++j) {
+            board[i][j] = ' ';
+        }
+    }
+}
+
+// Function to print the Tic-Tac-Toe board
+void printBoard(char board[3][3]) {
+    int i, j;
+    printf("\n");
+    for (i = 0; i < 3; ++i) {
+        for (j = 0; j < 3; ++j) {
+            printf(" %c ", board[i][j]);
+            if (j < 2) {
+                printf("|");
+            }
+        }
+        printf("\n");
+        if (i < 2) {
+            printf("-----------\n");
+        }
+    }
+    printf("\n");
+}
+
+// Function to check if a player has won
+int checkWin(char board[3][3], char player) {
+    int i;
+    // Check rows and columns
+    for (i = 0; i < 3; ++i) {
+        if ((board[i][0] == player && board[i][1] == player && board[i][2] == player) ||
+            (board[0][i] == player && board[1][i] == player && board[2][i] == player)) {
+            return 1;  // Player has won
+        }
+    }
+    // Check diagonals
+    if ((board[0][0] == player && board[1][1] == player && board[2][2] == player) ||
+        (board[0][2] == player && board[1][1] == player && board[2][0] == player)) {
+        return 1;  // Player has won
+    }
+    return 0;  // No win yet
+}
+
+// Function to check if the game is a draw
+int checkDraw(char board[3][3]) {
+    int i, j;
+    for (i = 0; i < 3; ++i) {
+        for (j = 0; j < 3; ++j) {
+            if (board[i][j] == ' ') {
+                return 0;  // Empty space found, game is not a draw
+            }
+        }
+    }
+    return 1;  // All spaces filled, game is a draw
+}
+
+// Function to make a move on the board
+int makeMove(char board[3][3], int row, int col, char player) {
+    // Check if the chosen position is within the board
+    if (row < 0 || row >= 3 || col < 0 || col >= 3) {
+        return 0;  // Invalid move
+    }
+    // Check if the chosen position is already occupied
+    if (board[row][col] != ' ') {
+        return 0;  // Invalid move
+    }
+    // Make the move
+    board[row][col] = player;
+    return 1;  // Valid move
+}
